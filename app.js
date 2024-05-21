@@ -32,6 +32,8 @@ connection.connect((err) => {
   console.log("Connected to the database as id " + connection.threadId);
 });
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/data", (req, res) => {
   connection.query("SELECT * FROM TASKS", (err, results) => {
     if (err) {
