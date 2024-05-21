@@ -15,6 +15,7 @@ console.log("Server on port", PORT);*/
 const express = require("express");
 const mysql = require("mysql2");
 const app = express();
+const path = require("path");
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
