@@ -1,4 +1,4 @@
-const express = require("express");
+/*const express = require("express");
 const { pool } = require("./db");
 const { PORT } = require("./config");
 
@@ -9,15 +9,40 @@ app.get("/api/tasks", async (req, res) => {
   res.json(rows);
 });
 
-/*app.get("/ping", async (req, res) => {
-  const [result] = await pool.query(`SELECT "hello world" as RESULT`);
-  res.json(result[0]);
+app.listen(PORT);
+console.log("Server on port", PORT);*/
+
+const express = require("express");
+const mysql = require("mysql2");
+const app = express();
+
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
-app.get("/create", async (req, res) => {
-  const result = await pool.query('INSERT INTO users(name) VALUES ("John")');
-  res.json(result);
-});*/
+connection.connect((err) => {
+  if (err) {
+    console.error("Error connecting to the database:", err.stack);
+    return;
+  }
+  console.log("Connected to the database as id " + connection.threadId);
+});
 
-app.listen(PORT);
-console.log("Server on port", PORT);
+app.get("/data", (req, res) => {
+  connection.query("SELECT * FROM TASKS", (err, results) => {
+    if (err) {
+      console.error("Error executing query:", err.stack);
+      res.status(500).send(err.toString());
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
